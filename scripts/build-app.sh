@@ -1,5 +1,6 @@
 #!/bin/bash
-# Builds Tendedero.app into ./build without needing Xcode.
+# Builds Tendedero.app into ./build without needing Xcode, then moves it to
+# /Applications and opens it there. Set SKIP_INSTALL=1 to only build.
 # Usage: scripts/build-app.sh [debug|release]
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -96,3 +97,18 @@ else
   echo "Signed ad hoc (no Developer ID found)"
 fi
 echo "Built $APP"
+
+[ "${SKIP_INSTALL:-}" = 1 ] && exit 0
+
+# Install, so the copy that opens at login is always the latest build. It is
+# moved, not copied, so Spotlight and Launchpad list a single Tendedero. Any
+# running copy quits first: on SIGTERM it puts the screenshot settings back.
+INSTALLED="/Applications/Tendedero.app"
+pkill -TERM -x Tendedero || true
+for _ in $(seq 50); do pgrep -x Tendedero >/dev/null || break; sleep 0.1; done
+rm -rf "$INSTALLED"
+mv "$APP" "$INSTALLED"
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
+  -u "$PWD/$APP" 2>/dev/null || true
+open "$INSTALLED"
+echo "Installed $INSTALLED"

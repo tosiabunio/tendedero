@@ -119,10 +119,11 @@ like any other app.
 git clone git@github.com:alejandrobujan/tendedero.git
 cd tendedero
 scripts/build-app.sh
-open build/Tendedero.app
 ```
 
-Requires the Swift toolchain. Xcode is optional. With the Command Line Tools for macOS 27, the script falls back to the macOS 26 SDK they install alongside, because the new SDK needs a SwiftUI macro plugin only Xcode includes. Local builds are signed ad hoc,
+The script builds Tendedero.app and moves it to Applications, replacing and
+quitting any copy already there, and opens it. Run it with `SKIP_INSTALL=1` to
+only build, into `build/Tendedero.app`. Requires the Swift toolchain. Xcode is optional. With the Command Line Tools for macOS 27, the script falls back to the macOS 26 SDK they install alongside, because the new SDK needs a SwiftUI macro plugin only Xcode includes. Local builds are signed ad hoc,
 so macOS asks again for access to the Desktop after each rebuild.
 
 <details>

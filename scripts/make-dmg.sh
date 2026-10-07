@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-scripts/build-app.sh release
+SKIP_INSTALL=1 scripts/build-app.sh release
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' build/Tendedero.app/Contents/Info.plist)"
 DMG="build/Tendedero-$VERSION.dmg"
 NAME="Tendedero"
