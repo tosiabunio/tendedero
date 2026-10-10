@@ -110,5 +110,13 @@ rm -rf "$INSTALLED"
 mv "$APP" "$INSTALLED"
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
   -u "$PWD/$APP" 2>/dev/null || true
-open "$INSTALLED"
 echo "Installed $INSTALLED"
+
+# Opening it right after the old copy quits can fail with error -600 while
+# Launch Services catches up, so try again for a few seconds. Only the last
+# try shows the error.
+for attempt in $(seq 10); do
+  if open "$INSTALLED" 2>/dev/null; then break; fi
+  if [ "$attempt" = 10 ]; then open "$INSTALLED"; fi
+  sleep 0.5
+done
